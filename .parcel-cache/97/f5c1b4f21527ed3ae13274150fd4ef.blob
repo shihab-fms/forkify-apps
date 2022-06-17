@@ -1,0 +1,51 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sendJson = exports.getJson = void 0;
+
+var _regeneratorRuntime = require("regenerator-runtime");
+
+var _config = require("./config");
+
+const timeout = function (s) {
+  return new Promise(function (_, reject) {
+    setTimeout(function () {
+      reject(new Error(`Request took too long! Timeout after ${s} second`));
+    }, s * 1000);
+  });
+};
+
+const getJson = async function (url) {
+  try {
+    const res = await Promise.race([fetch(url), timeout(_config.TIMEOUT_SEC)]);
+    const data = await res.json();
+    if (!res.ok) throw new Error(`api not found! ${res.status}: ${data.message}`);
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.getJson = getJson;
+
+const sendJson = async function (url, upload) {
+  try {
+    const fetchPro = fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(upload)
+    });
+    const res = await Promise.race([fetchPro, timeout(_config.TIMEOUT_SEC)]);
+    const data = await res.json();
+    if (!res.ok) throw new Error(`api not found! ${res.status}: ${data.message}`);
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.sendJson = sendJson;

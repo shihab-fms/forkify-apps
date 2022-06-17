@@ -1,0 +1,39 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _regeneratorRuntime = require("regenerator-runtime");
+
+var _icons = _interopRequireDefault(require("../../img/icons.svg"));
+
+var _view = _interopRequireDefault(require("./view"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class ViewSearchResult extends _view.default {
+  _parentEl = document.querySelector('.search');
+  _errorMessage = 'No Receipe found! Please try again';
+  _message = '';
+
+  getQuery() {
+    const query = this._parentEl.querySelector('.search__field').value;
+
+    this._parentEl.querySelector('.search__field').value = '';
+    return query;
+  }
+
+  addHandelerSearchQuery(handeler) {
+    this._parentEl.addEventListener('submit', function (e) {
+      e.preventDefault();
+      handeler();
+    });
+  }
+
+}
+
+var _default = new ViewSearchResult();
+
+exports.default = _default;

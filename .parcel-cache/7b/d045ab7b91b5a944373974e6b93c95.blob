@@ -1,0 +1,79 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _view = _interopRequireDefault(require("./view"));
+
+var _icons = _interopRequireDefault(require("../../img/icons.svg"));
+
+var model = _interopRequireWildcard(require("../model.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class Pagination extends _view.default {
+  _parentEl = document.querySelector('.pagination');
+  _errorMessage = 'we could not find that result, please try another one';
+  _message = '';
+
+  _generateMarkup() {
+    const numPage = Math.ceil(this._data.recipes.length / this._data.resultPerPage);
+    const currentPage = this._data.page;
+
+    if (currentPage === 1 && numPage > 1) {
+      return this.#generateLeftSideButton(currentPage);
+    }
+
+    if (currentPage < numPage) {
+      return `${this.#generateRtghtSideButton(currentPage)}${this.#generateLeftSideButton(currentPage)}`;
+    }
+
+    if (currentPage === numPage) {
+      return this.#generateRtghtSideButton(currentPage);
+    }
+
+    return '';
+  }
+
+  addhendlerClick(handeler) {
+    this._parentEl.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--inline');
+      if (!btn) return;
+      const goToPage = +btn.dataset.goto;
+      handeler(goToPage);
+    });
+  }
+
+  #generateRtghtSideButton(curPage) {
+    return `
+          <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
+            <svg class="search__icon">
+              <use href="${_icons.default}#icon-arrow-left"></use>
+            </svg>
+            <span>page ${curPage - 1}</span>
+          </button>
+          `;
+  }
+
+  #generateLeftSideButton(curPage) {
+    return `
+          <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
+            <span>page ${curPage + 1}</span>
+            <svg class="search__icon">
+              <use href="${_icons.default}#icon-arrow-right"></use>
+            </svg>
+          </button>
+    `;
+  }
+
+}
+
+var _default = new Pagination();
+
+exports.default = _default;

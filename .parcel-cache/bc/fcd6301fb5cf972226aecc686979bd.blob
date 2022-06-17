@@ -1,0 +1,151 @@
+"use strict";
+
+require("core-js/modules/es.array.includes.js");
+
+require("core-js/modules/es.regexp.flags.js");
+
+require("core-js/modules/web.immediate.js");
+
+var model = _interopRequireWildcard(require("./model.js"));
+
+var _viewRecipe = _interopRequireDefault(require("./views/viewRecipe.js"));
+
+var _viewSearch = _interopRequireDefault(require("./views/viewSearch.js"));
+
+var _viewResult = _interopRequireDefault(require("./views/viewResult.js"));
+
+var _viewPagination = _interopRequireDefault(require("./views/viewPagination.js"));
+
+var _viewBookmark = _interopRequireDefault(require("./views/viewBookmark.js"));
+
+var _viewAddRecipe = _interopRequireDefault(require("./views/viewAddRecipe.js"));
+
+var _runtime = require("regenerator-runtime/runtime");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+// import viewPagination from './views/viewPagination.js';
+// Showing final recipe in the UI
+const controlRecipe = async function () {
+  try {
+    const id = window.location.hash.slice(1);
+    if (!id) return; // guard class for if there is no id
+    // 1) loading spinner
+
+    _viewRecipe.default.renderSpinner(); // bookmarked
+    // 0) update search result to mark search result
+
+
+    _viewResult.default.updateMarkup(model.loadPagination()); // 4) bookmarks updateing
+    // debugger;
+
+
+    _viewBookmark.default.updateMarkup(model.state.bookmarks); // 2) loading recipe
+
+
+    await model.loadRecipe(id); // 3) rendering recipe
+
+    _viewRecipe.default.renderMarkup(model.state.recipe);
+  } catch (err) {
+    _viewRecipe.default.renderErrorMessage(); // temp error
+
+
+    console.log(`${err.message} ⚠️⚠️⚠️`);
+  }
+};
+
+const controlSearchResult = async function () {
+  try {
+    _viewResult.default.renderSpinner(); // 1) get query string what have to search
+
+
+    const query = _viewSearch.default.getQuery();
+
+    if (!query) return; // 2) loadig search result
+
+    await model.loadSearchResult(query); // loading sppiner;
+    // 3) rendering result that you search
+
+    _viewResult.default.renderMarkup(model.loadPagination()); // viewResult.updateMarkup(model.loadPagination());
+    // viewPagination.renderMarkup()
+    // 4) rendering pagination inisializing
+
+
+    _viewPagination.default.renderMarkup(model.state.search);
+  } catch (err) {
+    console.log(err);
+
+    _viewResult.default.renderErrorMessage();
+  }
+};
+
+const controlPagination = function (goToPage) {
+  // const curPage = +btn.dataset.goto;
+  // const goToPage = btn.classList.contains('pagination__btn--prev')
+  //   ? curPage - 1
+  //   : curPage + 1;
+  _viewResult.default.renderMarkup(model.loadPagination(goToPage));
+
+  _viewPagination.default.renderMarkup(model.state.search); // console.log(btn, goToPage);
+
+};
+
+const controlServings = function (updateTo) {
+  // model.updateServings(updateTo);
+  model.updateServings(updateTo);
+
+  _viewRecipe.default.updateMarkup(model.state.recipe);
+};
+
+const controladdBookmark = function () {
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);else model.deleteBookmark(model.state.recipe.id);
+
+  _viewRecipe.default.renderMarkup(model.state.recipe);
+
+  _viewBookmark.default.renderMarkup(model.state.bookmarks); // console.log(model.state.recipe);
+
+};
+
+const controlBookmarks = function () {
+  _viewBookmark.default.renderMarkup(model.state.bookmarks);
+};
+
+const controlUploadRecipe = async function (newRecipe) {
+  try {
+    //upload new recipe
+    await model.uploadRecipe(newRecipe); // viewAddRecipe.renderMarkup(model.state.recipe)
+  } catch (err) {
+    console.log(err.message, 'me');
+
+    _viewAddRecipe.default.renderErrorMessage(err);
+  }
+}; // const goBack = function(){
+//   window.history.back();
+// }
+
+
+const ints = function () {
+  /**
+   * @author Mohammad shiful islam / shiahb
+   */
+  _viewAddRecipe.default.addhandlerUploadRecipe(controlUploadRecipe);
+
+  _viewBookmark.default.addhandlerbookmark(controlBookmarks);
+
+  _viewRecipe.default.addHandelerRender(controlRecipe);
+
+  _viewRecipe.default.addHanlerUpdateServings(controlServings);
+
+  _viewRecipe.default.addHandlerAddBookmark(controladdBookmark);
+
+  _viewSearch.default.addHandelerSearchQuery(controlSearchResult);
+
+  _viewPagination.default.addhendlerClick(controlPagination); // goBack();
+
+};
+
+ints();

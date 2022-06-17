@@ -1,0 +1,31 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _view = _interopRequireDefault(require("./view"));
+
+var _viewPreview = _interopRequireDefault(require("./viewPreview"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class ViewBookmark extends _view.default {
+  _parentEl = document.querySelector('.bookmarks');
+  _errorMessage = 'No bookmark yet! Chose the best recipe bookmarked it....';
+  _message = '';
+
+  addhandlerbookmark(handler) {
+    window.addEventListener('load', handler);
+  }
+
+  _generateMarkup() {
+    return this._data.map(bookmark => _viewPreview.default.renderMarkup(bookmark, false)).join('');
+  }
+
+}
+
+var _default = new ViewBookmark();
+
+exports.default = _default;
