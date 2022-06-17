@@ -116,7 +116,9 @@ const controlUploadRecipe = async function (newRecipe) {
 //   window.history.back();
 // }
 
-
+const newFeature = function(){
+  console.log('welcome to the application!')
+}
 
 const ints = function () {
 
@@ -131,7 +133,7 @@ const ints = function () {
   viewSearch.addHandelerSearchQuery(controlSearchResult);
   viewPagination.addhendlerClick(controlPagination);
   // goBack();
-  console.log('welcome!')
+  newFeature();
 };
 
 ints();
